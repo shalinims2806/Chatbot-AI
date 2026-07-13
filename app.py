@@ -157,6 +157,11 @@ st.markdown("""
         margin-top: 20px !important;
         line-height: 1.8;
         font-size: 1.05rem;
+        color: #1E293B !important;
+    }
+
+    .response-container * {
+        color: #1E293B !important;
     }
 
     /* Spinner styling */
