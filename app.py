@@ -1,6 +1,6 @@
 import os
 import streamlit as st
-import google.generativeai as genai
+from groq import Groq
 from dotenv import load_dotenv
 from datetime import datetime
 
@@ -214,14 +214,17 @@ def get_gemini_response(query):
         return "Please enter a question."
 
     try:
-        api_key = os.getenv("GEMINI_API_KEY")
+        api_key = os.getenv("GROQ_API_KEY")
         if not api_key:
             return "Error: GEMINI_API_KEY not found in .env file"
 
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-3.5-flash")
-        response = model.generate_content(query)
-        return response.text
+        client = Groq(api_key=api_key)
+        completion = client.chat.completions.create(
+    model="llama-3.3-70b-versatile",
+    messages=[{"role": "user", "content": query}],
+)
+        
+        return completion.choices[0].message.content
     except Exception as e:
         error_msg = str(e)
         if "API key" in error_msg or "invalid" in error_msg.lower():
