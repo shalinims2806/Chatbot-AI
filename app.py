@@ -156,7 +156,7 @@ def get_ai_response(query):
         return "Please enter a question."
 
     try:
-        api_key = os.getenv("GROQ_API_KEY")
+        api_key = st.secrets.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY")
         if not api_key:
             return "ERROR: GROQ_API_KEY not found. Please add it to your Streamlit secrets."
 
@@ -182,7 +182,6 @@ def get_ai_response(query):
             return "ERROR: Rate limit reached. Please wait a moment and try again."
         else:
             return f"Error: {error_msg}"
-
 
 # Sidebar
 with st.sidebar:
