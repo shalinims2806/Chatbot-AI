@@ -162,7 +162,7 @@ def get_ai_response(query):
 
         client = Groq(api_key=api_key)
         completion = client.chat.completions.create(
-            model="llama3-70b-8192",
+            model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": query}],
             temperature=0.7,
             max_tokens=2048,
