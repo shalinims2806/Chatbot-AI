@@ -8,7 +8,7 @@ load_dotenv()
 
 # Page Configuration
 st.set_page_config(
-    page_title="Gemini AI Assistant",
+    page_title="AI Assistant",
     page_icon="✨",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -17,7 +17,6 @@ st.set_page_config(
 # Custom CSS Styling
 st.markdown("""
 <style>
-    /* Main theme colors */
     :root {
         --primary-color: #4F46E5;
         --secondary-color: #06B6D4;
@@ -28,24 +27,18 @@ st.markdown("""
         --border-color: #E2E8F0;
     }
 
-    /* General Styling */
-    * {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    * { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
-    /* Hide Streamlit elements */
     #MainMenu { visibility: hidden; }
     header { visibility: hidden; }
     footer { visibility: hidden; }
 
-    /* Main container */
     .main {
         padding: 0;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         min-height: 100vh;
     }
 
-    /* Title and Header Styling */
     h1 {
         font-size: 2.8rem;
         font-weight: 700;
@@ -63,7 +56,6 @@ st.markdown("""
         margin-bottom: 1rem;
     }
 
-    /* Input field styling */
     .stTextInput > div > div > input {
         background-color: #FFFFFF !important;
         border: 2px solid #E2E8F0 !important;
@@ -74,9 +66,7 @@ st.markdown("""
         color: #1E293B !important;
     }
 
-    .stTextInput > div > div > input::placeholder {
-        color: #94A3B8 !important;
-    }
+    .stTextInput > div > div > input::placeholder { color: #94A3B8 !important; }
 
     .stTextInput > div > div > input:focus {
         border-color: #4F46E5 !important;
@@ -84,7 +74,6 @@ st.markdown("""
         color: #1E293B !important;
     }
 
-    /* Button styling */
     .stButton > button {
         background: linear-gradient(135deg, #4F46E5, #06B6D4) !important;
         color: white !important;
@@ -103,51 +92,17 @@ st.markdown("""
         box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4) !important;
     }
 
-    .stButton > button:active {
-        transform: translateY(0) !important;
-    }
+    .stButton > button:active { transform: translateY(0) !important; }
 
-    /* Sidebar styling */
     [data-testid="stSidebar"] {
         background: linear-gradient(180deg, #1E293B, #0F172A) !important;
     }
 
-    [data-testid="stSidebar"] h2 {
-        color: #F1F5F9 !important;
-    }
+    [data-testid="stSidebar"] h2 { color: #F1F5F9 !important; }
+    [data-testid="stSidebar"] p { color: #CBD5E1 !important; }
 
-    [data-testid="stSidebar"] p {
-        color: #CBD5E1 !important;
-    }
+    .stAlert { border-radius: 10px !important; border: none !important; }
 
-    /* Alert boxes */
-    .stAlert {
-        border-radius: 10px !important;
-        border: none !important;
-    }
-
-    /* Info boxes */
-    .stInfo {
-        background-color: #EEF2FF !important;
-        border-left: 4px solid #4F46E5 !important;
-        border-radius: 8px !important;
-    }
-
-    /* Success message */
-    .stSuccess {
-        background-color: #F0FDF4 !important;
-        border-left: 4px solid #10B981 !important;
-        border-radius: 8px !important;
-    }
-
-    /* Error message */
-    .stError {
-        background-color: #FEF2F2 !important;
-        border-left: 4px solid #EF4444 !important;
-        border-radius: 8px !important;
-    }
-
-    /* Response container */
     .response-container {
         background: white !important;
         border-radius: 12px !important;
@@ -160,16 +115,8 @@ st.markdown("""
         color: #1E293B !important;
     }
 
-    .response-container * {
-        color: #1E293B !important;
-    }
+    .response-container * { color: #1E293B !important; }
 
-    /* Spinner styling */
-    .stSpinner {
-        color: #4F46E5 !important;
-    }
-
-    /* Card styling */
     .feature-card {
         background: white;
         border-radius: 12px;
@@ -181,72 +128,71 @@ st.markdown("""
         color: #1E293B !important;
     }
 
-    .feature-card b {
-        color: #4F46E5 !important;
-    }
+    .feature-card b { color: #4F46E5 !important; }
 
     .feature-card:hover {
         box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
         border-color: #4F46E5;
-        color: #1E293B !important;
     }
 
-    /* Text styling */
     .subtitle {
         font-size: 1.2rem;
         color: #64748B;
         font-weight: 500;
     }
 
-    /* Divider */
     hr {
         border: none;
         height: 1px;
         background: #E2E8F0;
         margin: 2rem 0;
     }
-
 </style>
 """, unsafe_allow_html=True)
 
-def get_gemini_response(query):
+
+def get_ai_response(query):
     if not query or query.strip() == "":
         return "Please enter a question."
 
     try:
         api_key = os.getenv("GROQ_API_KEY")
         if not api_key:
-            return "Error: GEMINI_API_KEY not found in .env file"
+            return "ERROR: GROQ_API_KEY not found. Please add it to your Streamlit secrets."
 
         client = Groq(api_key=api_key)
         completion = client.chat.completions.create(
-    model="llama-3.3-70b-versatile",
-    messages=[{"role": "user", "content": query}],
-)
-        
+            model="llama-3.3-70b-versatile",
+            messages=[{"role": "user", "content": query}],
+            temperature=0.7,
+            max_tokens=2048,
+        )
         return completion.choices[0].message.content
+
     except Exception as e:
         error_msg = str(e)
-        if "API key" in error_msg or "invalid" in error_msg.lower():
-            return ("ERROR: Invalid Gemini API Key.\n\n"
-                   "Please check your API key:\n"
-                   "1. Go to: https://makersuite.google.com/app/apikey\n"
-                   "2. Copy your API key\n"
-                   "3. Update the .env file with the correct key\n"
-                   "4. Refresh this page")
+        if "api_key" in error_msg.lower() or "invalid" in error_msg.lower() or "401" in error_msg:
+            return ("ERROR: Invalid Groq API Key.\n\n"
+                    "Please check your API key:\n"
+                    "1. Go to: https://console.groq.com/keys\n"
+                    "2. Create or copy your API key\n"
+                    "3. Add it to Streamlit Secrets as GROQ_API_KEY\n"
+                    "4. Refresh this page")
+        elif "429" in error_msg or "rate" in error_msg.lower():
+            return "ERROR: Rate limit reached. Please wait a moment and try again."
         else:
             return f"Error: {error_msg}"
+
 
 # Sidebar
 with st.sidebar:
     st.markdown("## ⚙️ Settings & Info")
     st.markdown("---")
-
     st.markdown("### 🤖 About This App")
     st.markdown("""
-    **Gemini AI Assistant** is powered by Google's latest Gemini 3.5 Flash model.
+    **AI Assistant** powered by Meta's **Llama 3.3 70B** via Groq.
 
-    - ✨ Lightning-fast responses
+    - ⚡ Lightning-fast responses
     - 💡 High-quality AI
     - 🆓 Completely free
     - 🔒 No billing required
@@ -254,7 +200,6 @@ with st.sidebar:
 
     st.markdown("---")
     st.markdown("### 📚 What You Can Do")
-
     features = [
         ("💬", "Chat & Q&A"),
         ("📝", "Creative Writing"),
@@ -263,7 +208,6 @@ with st.sidebar:
         ("🌍", "Translation"),
         ("📊", "Data Analysis"),
     ]
-
     for emoji, feature in features:
         st.markdown(f"**{emoji} {feature}**")
 
@@ -275,40 +219,32 @@ with st.sidebar:
     3. Request code or explanations
     4. Try creative prompts
     """)
-
     st.markdown("---")
     st.markdown(f"*Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M')}*")
 
-# Main Content
-st.markdown("## ✨ Gemini AI Assistant")
-st.markdown('<p class="subtitle">Powered by Google Gemini 3.5 Flash - Completely Free</p>', unsafe_allow_html=True)
 
+# Main Content
+st.markdown("## ✨ AI Assistant")
+st.markdown('<p class="subtitle">Powered by Llama 3.3 70B via Groq — Fast & Free</p>', unsafe_allow_html=True)
 st.markdown("---")
 
-# Create columns for better layout
 col1, col2 = st.columns([3, 1], gap="large")
 
 with col1:
     st.markdown("### 💭 Ask Me Anything")
-
-    # Input section
     user_input = st.text_input(
         "Your question or prompt:",
         key="input",
         placeholder="Type your question here... (e.g., 'Write a Python function to sort a list')"
     )
 
-    # Buttons in a row
     button_col1, button_col2, button_col3 = st.columns(3, gap="small")
-
     with button_col1:
         submit = st.button("🚀 Submit", use_container_width=True)
-
     with button_col2:
         clear = st.button("🔄 Clear", use_container_width=True)
-
     with button_col3:
-        st.markdown("")  # Empty space for alignment
+        st.markdown("")
 
 with col2:
     st.markdown("### 📊 Status")
@@ -323,7 +259,6 @@ with col2:
 
 st.markdown("---")
 
-# Handle button clicks
 if clear:
     st.rerun()
 
@@ -331,11 +266,9 @@ if submit:
     if user_input.strip() == "":
         st.warning("⚠️ Please enter a question first!")
     else:
-        # Show loading state
         with st.spinner("🤔 Thinking... Processing your request..."):
-            response = get_gemini_response(user_input)
+            response = get_ai_response(user_input)
 
-        # Display response
         if response.startswith("ERROR:"):
             st.error(f"❌ {response}")
         else:
@@ -346,7 +279,7 @@ if submit:
             </div>
             """, unsafe_allow_html=True)
 
-# Example queries section
+# Example queries
 st.markdown("---")
 st.markdown("### 💡 Example Queries")
 
@@ -380,7 +313,7 @@ with example_col3:
 st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: #64748B; font-size: 0.9rem; padding: 20px;'>
-<p>🚀 Powered by <b>Google Gemini 3.5 Flash</b> | Built with <b>Streamlit</b></p>
+<p>⚡ Powered by <b>Llama 3.3 70B</b> via <b>Groq</b> | Built with <b>Streamlit</b></p>
 <p>Free • Fast • Reliable | No Billing Required</p>
 </div>
 """, unsafe_allow_html=True)
