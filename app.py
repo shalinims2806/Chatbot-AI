@@ -160,10 +160,17 @@ def get_ai_response(query):
         if not api_key:
             return "ERROR: Key not found in secrets at all."
 
-        return f"DEBUG - Key found: {api_key[:8]}... Now testing API call..."
+        client = Groq(api_key=api_key)
+        completion = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[{"role": "user", "content": query}],
+            temperature=0.7,
+            max_tokens=2048,
+        )
+        return completion.choices[0].message.content
 
     except Exception as e:
-        return f"DEBUG Error: {str(e)}"
+        return f"Error: {str(e)}"
 # Sidebar
 with st.sidebar:
     st.markdown("## ⚙️ Settings & Info")
