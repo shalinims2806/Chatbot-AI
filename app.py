@@ -172,14 +172,9 @@ def get_ai_response(query):
     except Exception as e:
         error_msg = str(e)
         if "api_key" in error_msg.lower() or "invalid" in error_msg.lower() or "401" in error_msg:
-            return ("ERROR: Invalid Groq API Key.\n\n"
-                    "Please check your API key:\n"
-                    "1. Go to: https://console.groq.com/keys\n"
-                    "2. Create or copy your API key\n"
-                    "3. Add it to Streamlit Secrets as GROQ_API_KEY\n"
-                    "4. Refresh this page")
+            return ("ERROR: Invalid Groq API Key....")
         elif "429" in error_msg or "rate" in error_msg.lower():
-            return "ERROR: Rate limit reached. Please wait a moment and try again."
+            return "ERROR: Rate limit reached..."
         else:
             return f"Error: {error_msg}"
 
