@@ -162,10 +162,13 @@ def get_ai_response(query):
 
         client = Groq(api_key=api_key)
         completion = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="openai/gpt-oss-120b",
             messages=[{"role": "user", "content": query}],
-            temperature=0.7,
-            max_tokens=2048,
+            temperature=1,
+            max_completion_tokens=2048,
+            top_p=1,
+            stream=False,
+            stop=None
         )
         return completion.choices[0].message.content
 
