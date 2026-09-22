@@ -158,26 +158,12 @@ def get_ai_response(query):
     try:
         api_key = st.secrets.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY")
         if not api_key:
-            return "ERROR: GROQ_API_KEY not found. Please add it to your Streamlit secrets."
+            return "ERROR: Key not found in secrets at all."
 
-        client = Groq(api_key=api_key)
-        completion = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[{"role": "user", "content": query}],
-            temperature=0.7,
-            max_tokens=2048,
-        )
-        return completion.choices[0].message.content
+        return f"DEBUG - Key found: {api_key[:8]}... Now testing API call..."
 
     except Exception as e:
-        error_msg = str(e)
-        if "api_key" in error_msg.lower() or "invalid" in error_msg.lower() or "401" in error_msg:
-            return ("ERROR: Invalid Groq API Key....")
-        elif "429" in error_msg or "rate" in error_msg.lower():
-            return "ERROR: Rate limit reached..."
-        else:
-            return f"Error: {error_msg}"
-
+        return f"DEBUG Error: {str(e)}"
 # Sidebar
 with st.sidebar:
     st.markdown("## ⚙️ Settings & Info")
